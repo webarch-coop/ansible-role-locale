@@ -43,16 +43,21 @@
         src: /etc/default/locale
       register: locale_default_existing_b64encoded
 
-    - name: Decode the base64 encoded version of /etc/default/locale
+    # - name: Decode the base64 encoded version of /etc/default/locale
+    #   set_fact:
+    #     locale_default_existing_lines: "{{ ( locale_default_existing_b64encoded['content'] | b64decode | trim ).split('\n') }}"
+
+    - name: Set a fact for the default LANG
       set_fact:
-        locale_default_existing: "{{ locale_default_existing_b64encoded | b64decode }}"
+        locale_default_lang_existing: "{{ line | regex_replace('^LANG=') }}"
+      when: line is regex('^LANG=')
+      loop: "{{ ( locale_default_existing_b64encoded['content'] | b64decode | trim ).split('\n') }}"
+      loop_control:
+        loop_var: line
 
-    - debug:
-        var: locale_default_existing
-
-    # - name: Update locale
-    #   command: update-locale "LANG={{ locale_lang }}"
-
+    - name: Update locale
+      command: update-locale "LANG={{ locale_lang }}"
+      when: ( locale_default_lang_existing != locale_lang )
 
   tags:
     - locale
