@@ -11,5 +11,7 @@ skip_list:
   - "503"
   # Commands should not change things if nothing needs doing
   - "301"
+  # systemctl used in place of systemd module
+  - "303"
 # vim: syntax=yaml
 ...
