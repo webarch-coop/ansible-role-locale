@@ -45,7 +45,7 @@
 
     - name: Decode the base64 encoded version of /etc/default/locale
       set_fact:
-        locale_default_existing: "{{ (locale_default_existing_b64encoded | b64decode).split('\n') | list }}"
+        locale_default_existing: "{{ locale_default_existing_b64encoded | b64decode }}"
 
     - debug:
         var: locale_default_existing
