@@ -1,0 +1,42 @@
+---
+- name: Set locale
+  block:
+
+    - name: Debconf default locale
+      debconf:
+        name: locales
+        question: locales/default_environment_locale
+        value: "{{ locale_lang }}"
+        vtype: select
+
+    - name: Locale package present
+      apt:
+        pkg:
+          - locales
+        state: present
+
+    - name: Locale present
+      locale_gen:
+        name: "{{ locale_lang }}"
+        state: present
+
+    - name: Check the environment
+      command: systemctl show-environment
+      register: locale_systemctlenv
+      changed_when: false
+      check_mode: false
+
+    - name: Update LANG and locale
+      block:
+
+        - name: Set LANG
+          command: "systemctl set-environment LANG={{ locale_lang }}"
+
+        - name: Update locate
+          command: update-locale "{{ locale_lang }}"
+
+      when: ( "LANG={{ locale_lang }}" not in zammad_systemctlenv.stdout_lines )
+
+  tags:
+    - locale
+...
