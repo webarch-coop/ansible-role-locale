@@ -42,10 +42,8 @@
       slurp:
         src: /etc/default/locale
       register: locale_default_existing_b64encoded
-
-    # - name: Decode the base64 encoded version of /etc/default/locale
-    #   set_fact:
-    #     locale_default_existing_lines: "{{ ( locale_default_existing_b64encoded['content'] | b64decode | trim ).split('\n') }}"
+      changed_when: false
+      check_mode: false
 
     - name: Set a fact for the default LANG
       set_fact:
