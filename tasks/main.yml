@@ -35,7 +35,7 @@
         - name: Update locate
           command: update-locale "{{ locale_lang }}"
 
-      when: ( locale_lang not in zammad_systemctlenv.stdout_lines )
+      when: ( "{{ locale_lang }}" not in zammad_systemctlenv.stdout_lines )
 
   tags:
     - locale
