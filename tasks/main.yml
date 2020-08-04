@@ -20,30 +20,39 @@
         name: "{{ locale_lang }}"
         state: present
 
-    - name: Check the environment
+    - name: Check the systemd environment
       command: systemctl show-environment
       register: locale_systemctlenv
       changed_when: false
       check_mode: false
 
-    - name: Set a fact for the LANG
+    - name: Set a fact for the systemd LANG
       set_fact:
-        locale_lang_existing: "{{ line | regex_replace('^LANG=') }}"
+        locale_systemd_lang_existing: "{{ line | regex_replace('^LANG=') }}"
       when: line is regex('^LANG=')
       loop: "{{ locale_systemctlenv.stdout_lines }}"
       loop_control:
         loop_var: line
 
-    - name: Update LANG and locale
-      block:
+    - name: Set systemd LANG
+      command: "systemctl set-environment LANG={{ locale_lang }}"
+      when: ( locale_systemd_lang_existing != locale_lang )
 
-        - name: Set LANG
-          command: "systemctl set-environment LANG={{ locale_lang }}"
+    - name: Slurp /etc/default/locale
+      slurp:
+        src: /etc/default/locale
+      register: locale_default_existing_b64encoded
 
-        - name: Update locate
-          command: update-locale "{{ locale_lang }}"
+    - name: Decode the base64 encoded version of /etc/default/locale
+      set_fact:
+        locale_default_existing: "{{ locale_default_existing_b64encoded | b64decode | list }}"
 
-      when: ( locale_lang_existing != locale_lang )
+    - debug:
+        var: locale_default_existing
+
+    # - name: Update locale
+    #   command: update-locale "LANG={{ locale_lang }}"
+
 
   tags:
     - locale
