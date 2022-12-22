@@ -3,31 +3,31 @@
   block:
 
     - name: Debconf default locale
-      debconf:
+      ansible.builtin.debconf:
         name: locales
         question: locales/default_environment_locale
         value: "{{ locale_lang }}"
         vtype: select
 
     - name: Locale package present
-      apt:
+      ansible.builtin.apt:
         pkg:
           - locales
         state: present
 
     - name: Locale present
-      locale_gen:
+      community.general.locale_gen:
         name: "{{ locale_lang }}"
         state: present
 
     - name: Check the systemd environment
-      command: systemctl show-environment
+      ansible.builtin.command: systemctl show-environment
       register: locale_systemctlenv
       changed_when: false
       check_mode: false
 
     - name: Set a fact for the systemd LANG
-      set_fact:
+      ansible.builtin.set_fact:
         locale_systemd_lang_existing: "{{ line | regex_replace('^LANG=') }}"
       when: line is regex('^LANG=')
       loop: "{{ locale_systemctlenv.stdout_lines }}"
@@ -35,18 +35,18 @@
         loop_var: line
 
     - name: Set systemd LANG
-      command: "systemctl set-environment LANG={{ locale_lang }}"
+      ansible.builtin.command: "systemctl set-environment LANG={{ locale_lang }}"
       when: ( locale_systemd_lang_existing != locale_lang )
 
     - name: Slurp /etc/default/locale
-      slurp:
+      ansible.builtin.slurp:
         src: /etc/default/locale
       register: locale_default_existing_b64encoded
       changed_when: false
       check_mode: false
 
     - name: Set a fact for the default LANG
-      set_fact:
+      ansible.builtin.set_fact:
         locale_default_lang_existing: "{{ line | regex_replace('^LANG=') }}"
       when: line is regex('^LANG=')
       loop: "{{ ( locale_default_existing_b64encoded['content'] | b64decode | trim ).split('\n') }}"
@@ -54,9 +54,10 @@
         loop_var: line
 
     - name: Update locale
-      command: update-locale "LANG={{ locale_lang }}"
+      ansible.builtin.command: update-locale "LANG={{ locale_lang }}"
       when: ( locale_default_lang_existing != locale_lang )
 
+  when: locale | bool
   tags:
     - locale
 ...
