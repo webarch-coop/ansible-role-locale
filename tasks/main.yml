@@ -55,9 +55,19 @@
       loop_control:
         loop_var: line
 
+    - name: Set a fact for the default LANGUAGE
+      ansible.builtin.set_fact:
+        locale_default_language_existing: "{{ line | regex_replace('^LANGUAGE=') }}"
+      when: line is regex('^LANGUAGE=')
+      loop: "{{ ( locale_default_existing_b64encoded['content'] | b64decode | trim ).split('\n') }}"
+      loop_control:
+        loop_var: line
+
     - name: Update locale
-      ansible.builtin.command: update-locale "LANG={{ locale_lang }}"
-      when: ( locale_default_lang_existing != locale_lang )
+      ansible.builtin.command: "update-locale LANG={{ locale_lang }} LANGUAGE={{ locale_language }}"
+      when: >-
+        ( locale_default_lang_existing != locale_lang ) or
+        ( locale_default_language_existing != locale_language )
 
   when: locale | bool
   tags:
