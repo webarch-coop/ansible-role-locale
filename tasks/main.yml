@@ -34,7 +34,7 @@
       loop_control:
         loop_var: line
 
-    - name: Set systemd LANG
+    - name: Set systemd LANG  # noqa yaml[comments] command-instead-of-module
       ansible.builtin.command: "systemctl set-environment LANG={{ locale_lang }}"
       when: ( locale_systemd_lang_existing != locale_lang )
 
