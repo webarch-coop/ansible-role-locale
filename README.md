@@ -10,7 +10,7 @@ See the [defaults/main.yml](defaults/main.yml) file for the default variables an
 
 ### locale
 
-Set the `locale` variable to `false` to prevent any tasks in this role being run.
+Set the `locale` variable to `false` to prevent any tasks in this role being run, this variable defaults to `true`.
 
 ### locale_lang
 
