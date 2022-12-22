@@ -68,8 +68,8 @@
     - name: Update locale
       ansible.builtin.command: "update-locale LANG={{ locale_lang }} LANGUAGE={{ locale_language }}"
       when: >-
-        ( locale_default_locale.LANG != locale_lang ) or
-        ( locale_default_locale.LANGUAGE != locale_language )
+        ( locale_default_locale.LANG is not defined or locale_default_locale.LANG != locale_lang ) or
+        ( locale_default_locale.LANGUAGE is not defined or locale_default_locale.LANGUAGE != locale_language )
 
   when: locale | bool
   tags:
