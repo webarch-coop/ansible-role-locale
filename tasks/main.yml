@@ -24,21 +24,21 @@
 
     - name: Check the systemd environment
       ansible.builtin.command: systemctl show-environment
-      register: locale_systemctlenv
       changed_when: false
       check_mode: false
+      register: locale_systemctlenv
 
-    - name: Set a fact for the systemd LANG
+    - name: Set a fact for the systemd environment
       ansible.builtin.set_fact:
-        locale_systemd_lang_existing: "{{ line | regex_replace('^LANG=') }}"
-      when: line is regex('^LANG=')
-      loop: "{{ locale_systemctlenv.stdout_lines }}"
-      loop_control:
-        loop_var: line
+        locale_environment: "{{ locale_systemctlenv.stdout | community.general.jc('ini') }}"
 
     - name: Set systemd LANG  # noqa yaml[comments] command-instead-of-module
       ansible.builtin.command: "systemctl set-environment LANG={{ locale_lang }}"
-      when: ( locale_systemd_lang_existing != locale_lang )
+      when: ( locale_environment.LANG != locale_lang )
+
+    - name: Set systemd LANGUAGE  # noqa yaml[comments] command-instead-of-module
+      ansible.builtin.command: "systemctl set-environment LANGUAGE={{ locale_language }}"
+      when: ( locale_environment.LANGUAGE != locale_language )
 
     - name: Slurp /etc/default/locale
       ansible.builtin.slurp:
@@ -47,27 +47,15 @@
       changed_when: false
       check_mode: false
 
-    - name: Set a fact for the default LANG
+    - name: Set a fact for the default locale
       ansible.builtin.set_fact:
-        locale_default_lang_existing: "{{ line | regex_replace('^LANG=') }}"
-      when: line is regex('^LANG=')
-      loop: "{{ ( locale_default_existing_b64encoded['content'] | b64decode | trim ).split('\n') }}"
-      loop_control:
-        loop_var: line
-
-    - name: Set a fact for the default LANGUAGE
-      ansible.builtin.set_fact:
-        locale_default_language_existing: "{{ line | regex_replace('^LANGUAGE=') }}"
-      when: line is regex('^LANGUAGE=')
-      loop: "{{ ( locale_default_existing_b64encoded['content'] | b64decode | trim ).split('\n') }}"
-      loop_control:
-        loop_var: line
+        locale_default_locale: "{{ locale_default_existing_b64encoded['content'] | b64decode | community.general.jc('ini') }}"
 
     - name: Update locale
       ansible.builtin.command: "update-locale LANG={{ locale_lang }} LANGUAGE={{ locale_language }}"
       when: >-
-        ( locale_default_lang_existing != locale_lang ) or
-        ( locale_default_language_existing != locale_language )
+        ( locale_default_locale.LANG != locale_lang ) or
+        ( locale_default_locale.LANGUAGE != locale_language )
 
   when: locale | bool
   tags:
