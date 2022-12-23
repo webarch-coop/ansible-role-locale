@@ -46,11 +46,15 @@
 
         - name: Set systemd LANG  # noqa yaml[comments] command-instead-of-module
           ansible.builtin.command: "systemctl set-environment LANG={{ locale_lang }}"
-          when: ( locale_environment.LANG != locale_lang )
+          when: >-
+            ( locale_environment.LANG is not defined ) or
+            ( locale_environment.LANG != locale_lang )
 
         - name: Set systemd LANGUAGE  # noqa yaml[comments] command-instead-of-module
           ansible.builtin.command: "systemctl set-environment LANGUAGE={{ locale_language }}"
-          when: ( locale_environment.LANGUAGE != locale_language )
+          when: >-
+            ( locale_environment.LANGUAGE is not defined ) or
+            ( locale_environment.LANGUAGE != locale_language )
 
       when: locale_init.stdout == "systemd"
 

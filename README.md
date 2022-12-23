@@ -20,6 +20,10 @@ The `locale_lang` defaults to `en_GB.UTF-8`.
 
 The `locale_language` defaults to `en_GB:en`.
 
+## Requirements
+
+This role requires [JC](https://github.com/kellyjonbrazil/jc) version [1.22.0](https://github.com/kellyjonbrazil/jc/releases/tag/v1.22.0) or greater, installed via `pip3`, to be present on the Ansible controller.
+
 ## Repository
 
 The primary URL of this repo is [`https://git.coop/webarch/locale`](https://git.coop/webarch/locale) however it is also [mirrored to GitHub](https://github.com/webarch-coop/ansible-role-locale) and [available via Ansible Galaxy](https://galaxy.ansible.com/chriscroome/locale).
