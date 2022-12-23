@@ -12,5 +12,9 @@ argument_specs:
       locale_lang:
         type: str
         required: true
-        description: The character set and language to configure.
+        description: The character set use.
+      locale_language:
+        type: str
+        required: true
+        description: The language to use.
 ...
