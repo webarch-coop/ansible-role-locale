@@ -16,6 +16,10 @@ Set the `locale` variable to `false` to prevent any tasks in this role being run
 
 The `locale_lang` defaults to `en_GB.UTF-8`.
 
+### locale_language
+
+The `locale_language` defaults to `en_GB:en`.
+
 ## Repository
 
 The primary URL of this repo is [`https://git.coop/webarch/locale`](https://git.coop/webarch/locale) however it is also [mirrored to GitHub](https://github.com/webarch-coop/ansible-role-locale) and [available via Ansible Galaxy](https://galaxy.ansible.com/chriscroome/locale).
