@@ -35,6 +35,7 @@
         state: present
       environment:
         DEBIAN_FRONTEND: noninteractive
+        LANG: "en_US.UTF-8"
 
     - name: Locale present
       community.general.locale_gen:
