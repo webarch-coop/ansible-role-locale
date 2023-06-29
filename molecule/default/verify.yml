@@ -26,6 +26,21 @@
       ansible.builtin.debug:
         var: molecule_locale_a.stdout_lines
 
+    - name: Slurp /etc/locale.gen
+      ansible.builtin.slurp:
+        src: /etc/locale.gen
+      register: molecule_locale_gen_existing_b64encoded
+      changed_when: false
+      check_mode: false
+
+    - name: Set a fact for the values in /etc/locale.gen
+      ansible.builtin.set_fact:
+        molecule_locale_gen: "{{ molecule_locale_gen_existing_b64encoded['content'] | b64decode | string | community.general.jc('ini') }}"
+
+    - name: Debug the settings in /etc/default/locale
+      ansible.builtin.debug:
+        var: molecule_locale_gen
+
     - name: Slurp /etc/default/locale
       ansible.builtin.slurp:
         src: /etc/default/locale
