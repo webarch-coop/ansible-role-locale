@@ -31,18 +31,22 @@
       check_mode: false
       changed_when: false
       register: molecule_printenv_lang
+      failed_when: molecule_printenv_lang.rc is not regex('^0|1$')
 
     - name: Debug printenv LANG
       ansible.builtin.debug:
-        var: molecule_printenv_lang.stdout
+        var: molecule_printenv_lang.stdout_lines
+      when: molecule_printenv_lang.rc == 1
 
     - name: Run printenv LANGUAGE
       ansible.builtin.command: printenv LANGUAGE
       check_mode: false
       changed_when: false
       register: molecule_printenv_language
+      failed_when: molecule_printenv_langguage.rc is not regex('^0|1$')
 
     - name: Debug printenv LANGUAGE
       ansible.builtin.debug:
-        var: molecule_printenv_language.stdout
+        var: molecule_printenv_language.stdout_lines
+      when: molecule_printenv_langguage.rc == 1
 ...
