@@ -24,10 +24,17 @@
       changed_when: false
       check_mode: false
       register: locale_ps
+      failed_when: locale_ps.rc is not regex('^0|47$')
 
     - name: Set a fact for the init system
       ansible.builtin.set_fact:
         locale_init: "{{ locale_ps.stdout }}"
+      when: locale_ps.rc == 0
+
+    - name: When the exit code is 47 assume is is because this is a chroot
+      ansible.builtin.set_fact:
+        php_init: chroot
+      when: locale_ps.rc == 47
 
     - name: Debug the ini system when it is not systemd
       ansible.builtin.debug:
@@ -55,7 +62,7 @@
       register: locale_present
       failed_when: >-
         ( ( locale_init == "systemd" ) and ( locale_present.rc != 0 ) ) or
-        ( ( locale_init != "systemd" ) and ( locale_present.rc != 100 )
+        ( ( locale_init == "chroot" ) and ( locale_present.rc != 100 )
 
     - name: Locale present
       community.general.locale_gen:
