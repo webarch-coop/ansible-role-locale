@@ -62,7 +62,7 @@
       register: locale_present
       failed_when: >-
         ( ( locale_init == "systemd" ) and ( locale_present.rc != 0 ) ) or
-        ( ( locale_init == "chroot" ) and ( locale_present.rc != 100 )
+        ( ( locale_init == "chroot" ) and ( locale_present.rc != 100 ) )
 
     - name: Locale present
       community.general.locale_gen:
