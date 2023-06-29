@@ -43,10 +43,10 @@
       check_mode: false
       changed_when: false
       register: molecule_printenv_language
-      failed_when: molecule_printenv_langguage.rc is not regex('^0|1$')
+      failed_when: molecule_printenv_language.rc is not regex('^0|1$')
 
     - name: Debug printenv LANGUAGE
       ansible.builtin.debug:
         var: molecule_printenv_language.stdout_lines
-      when: molecule_printenv_langguage.rc == 1
+      when: molecule_printenv_language.rc == 1
 ...
