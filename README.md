@@ -10,7 +10,7 @@ See the [defaults/main.yml](defaults/main.yml) file for the default variables an
 
 ### locale
 
-Set the `locale` variable to `false` to prevent any tasks in this role being run, this variable defaults to `true`.
+Set the `locale` variable to `true` for the tasks in this role being run, this variable defaults to `false`.
 
 ### locale_lang
 
@@ -32,4 +32,3 @@ If you use this role please use a tagged release, see [the release notes](https:
 ## License
 
 This role is released under [the same terms as Ansible itself](https://github.com/ansible/ansible/blob/devel/COPYING), the [GNU GPLv3](LICENSE).
-

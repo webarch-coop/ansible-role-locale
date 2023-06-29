@@ -24,7 +24,7 @@
 
     - name: Debug locale -a
       ansible.builtin.debug:
-        var: molecule_locale_a.stdout
+        var: molecule_locale_a.stdout_lines
 
     - name: Run printenv LANG
       ansible.builtin.command: printenv LANG
