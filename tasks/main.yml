@@ -18,6 +18,22 @@
 - name: Set locale
   block:
 
+    # When in a docker container locale_init.stdout is usually sh or bash
+    - name: Check if system has been booted with systemd as init system
+      ansible.builtin.command: "ps -p 1 -o comm="
+      changed_when: false
+      check_mode: false
+      register: locale_ps
+
+    - name: Set a fact for the init system
+      ansible.builtin.set_fact:
+        locale_init: "{{ locale_ps.stdout }}"
+
+    - name: Debug the ini system when it is not systemd
+      ansible.builtin.debug:
+        var: locale_init
+      when: locale_init != "systemd"
+
     - name: Debconf default locale
       ansible.builtin.debconf:
         name: locales
@@ -36,6 +52,10 @@
       environment:
         DEBIAN_FRONTEND: noninteractive
         LANG: "en_US.UTF-8"
+      register: locale_present
+      failed_when: >-
+        ( ( locale_init == "systemd" ) and ( locale_present.rc != 0 ) ) or
+        ( ( locale_init != "systemd" ) and ( locale_present.rc != 100 )
 
     - name: Locale present
       community.general.locale_gen:
