@@ -33,7 +33,7 @@
 
     - name: When the exit code is 47 assume is is because this is a chroot
       ansible.builtin.set_fact:
-        php_init: chroot
+        locale_init: chroot
       when: locale_ps.rc == 47
 
     - name: Debug the ini system when it is not systemd
