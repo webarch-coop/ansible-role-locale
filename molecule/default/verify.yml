@@ -1,0 +1,48 @@
+# Copyright 2020-2023 Chris Croome
+#
+# This file is part of the Webarchitects Locale Ansible role.
+#
+# The Webarchitects Locale Ansible role is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# The Webarchitects Locale Ansible role is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with the Webarchitects Locale Ansible role. If not, see <https://www.gnu.org/licenses/>.
+---
+- name: Verify as root
+  become: true
+  connection: local
+  gather_facts: true
+  hosts:
+    - localhost
+  tasks:
+
+    - name: Run locale -a
+      ansible.builtin.command: locale -a
+      check_mode: false
+      changed_when: false
+      register: molecule_locale_a
+
+    - name: Debug locale -a
+      ansible.builtin.debug:
+        var: molecule_locale_a.stdout
+
+    - name: Run printenv LANG
+      ansible.builtin.command: printenv LANG
+      check_mode: false
+      changed_when: false
+      register: molecule_printenv_lang
+
+    - name: Debug printenv LANG
+      ansible.builtin.debug:
+        var: molecule_printenv_lang.stdout
+
+    - name: Run printenv LANGUAGE
+      ansible.builtin.command: printenv LANGUAGE
+      check_mode: false
+      changed_when: false
+      register: molecule_printenv_language
+
+    - name: Debug printenv LANGUAGE
+      ansible.builtin.debug:
+        var: molecule_printenv_language.stdout
+...

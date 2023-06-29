@@ -8,7 +8,7 @@
 #
 # You should have received a copy of the GNU General Public License along with the Webarchitects Locale Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
-locale: true
+locale: false
 locale_lang: en_GB.UTF-8
 locale_language: en_GB:en
 ...
