@@ -60,8 +60,7 @@
           ansible.builtin.apt:
             pkg:
               - locales
-            force_apt_get: true
-            dpkg_options: force-confdef,force-confold,Use-Pty=0
+            dpkg_options: force-confdef,force-confold
             install_recommends: true
             update_cache: true
             state: present
@@ -69,6 +68,9 @@
             DEBIAN_FRONTEND: noninteractive
             LANG: "en_US.UTF-8"
           register: locale_apt_install
+          failed_when:
+            ( ( locale_apt_install.rc is defined ) and ( locale_init == "chroot" ) and ( locale_apt_install.rc != "100" ) ) or
+            ( locale_apt_install.rc is not defined ) and ( locale_apt_install.stderr is defined ) and ( locale_apt_install.stderr | length != 0 ) )
 
       rescue:
 
