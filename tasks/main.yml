@@ -69,6 +69,7 @@
             LANG: "en_US.UTF-8"
           register: locale_apt_install
           failed_when:
+            ( ( "posix_openpt" not in locale_apt_install.stderr_lines ) and ( locale_init == "chroot" ) ) or
             ( ( locale_apt_install.rc is defined ) and ( locale_init == "chroot" ) and ( locale_apt_install.rc != "100" ) ) or
             ( ( locale_apt_install.rc is not defined ) and ( locale_apt_install.stderr is defined ) and ( locale_apt_install.stderr | length != 0 ) )
 
