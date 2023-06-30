@@ -35,7 +35,7 @@
 
     - name: Set a fact for the values in /etc/locale.gen
       ansible.builtin.set_fact:
-        molecule_locale_gen: "{{ molecule_locale_gen_existing_b64encoded['content'] | b64decode | ansible.builtin.split('\n') | reject('regex', '^[#| ]') }}"
+        molecule_locale_gen: "{{ molecule_locale_gen_existing_b64encoded['content'] | b64decode | ansible.builtin.split('\n') | reject('regex', '^[#]') | reject('regex', '^$') }}"
 
     - name: Debug the settings in /etc/default/locale
       ansible.builtin.debug:
