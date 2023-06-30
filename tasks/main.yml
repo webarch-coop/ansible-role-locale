@@ -60,7 +60,8 @@
           ansible.builtin.apt:
             pkg:
               - locales
-            dpkg_options: force-confdef,force-confold
+            force_apt_get: true
+            dpkg_options: force-confdef,force-confold,Use-Pty=0
             install_recommends: true
             update_cache: true
             state: present
