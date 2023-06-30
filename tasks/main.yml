@@ -51,7 +51,7 @@
         question: locales/default_environment_locale
         value: "{{ locale_lang }}"
         vtype: select
-      when: locale_init != chroot
+      when: locale_init != "chroot"
 
     - name: Locale package present
       ansible.builtin.apt:
