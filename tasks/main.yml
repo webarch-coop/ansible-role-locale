@@ -64,6 +64,11 @@
       environment:
         DEBIAN_FRONTEND: noninteractive
         LANG: "en_US.UTF-8"
+      register: locale_apt_install
+      failed_when: >-
+        ( locale_apt_install.rc != 0 ) or
+        ( locale_apt_install.rc is not defined ) or
+        ( locale_init == "chroot" and locale_apt_install.rc is defined and locale_apt_install.rc != 100 )
 
     - name: Locale present
       community.general.locale_gen:
