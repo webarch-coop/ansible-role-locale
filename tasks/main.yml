@@ -18,6 +18,10 @@
 - name: Set locale
   block:
 
+    - name: Include locale verify variables tasks
+      ansible.builtin.include_tasks: verify.yml
+      when: locale_verify | bool
+
     # When in a docker container locale_init.stdout is usually sh or bash
     - name: Check if system has been booted with systemd as init system
       ansible.builtin.command: "ps -p 1 -o comm="
@@ -59,10 +63,6 @@
       environment:
         DEBIAN_FRONTEND: noninteractive
         LANG: "en_US.UTF-8"
-      register: locale_present
-      failed_when: >-
-        ( ( locale_init == "systemd" ) and ( locale_present.rc != 0 ) ) or
-        ( ( locale_init == "chroot" ) and ( locale_present.rc != 100 ) )
 
     - name: Locale present
       community.general.locale_gen:

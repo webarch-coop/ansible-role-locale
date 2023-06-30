@@ -20,6 +20,10 @@ The `locale_lang` defaults to `en_GB.UTF-8`.
 
 The `locale_language` defaults to `en_GB:en`.
 
+### locale_verify
+
+Verify all variables that start with `locale_` against the [meta/argument_spacs.yml](meta/argument_specs.yml), defaults to `true`.
+
 ## Requirements
 
 This role requires [JC](https://github.com/kellyjonbrazil/jc) version [1.22.0](https://github.com/kellyjonbrazil/jc/releases/tag/v1.22.0) or greater, installed via `pip3`, to be present on the Ansible controller.
