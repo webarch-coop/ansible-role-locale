@@ -35,11 +35,19 @@
 
     - name: Set a fact for the values in /etc/locale.gen
       ansible.builtin.set_fact:
-        molecule_locale_gen: "{{ molecule_locale_gen_existing_b64encoded['content'] | b64decode | string | community.general.jc('ini') }}"
+        molecule_locale_gen: "{{ molecule_locale_gen_existing_b64encoded['content'] | b64decode | ansible.builtin.split('\n') | reject('regex', '^[#| ]') }}"
 
     - name: Debug the settings in /etc/default/locale
       ansible.builtin.debug:
         var: molecule_locale_gen
+
+    - name: Check that /etc/locale.gen contains en_GB.UTF-8 UTF-8
+      ansible.builtin.assert:
+        that:
+          molecule_locale_gen == molecule_locale_gen_check
+      vars:
+        molecule_locale_gen_check:
+          - "en_GB.UTF-8 UTF-8"
 
     - name: Slurp /etc/default/locale
       ansible.builtin.slurp:
@@ -56,6 +64,15 @@
       ansible.builtin.debug:
         var: molecule_locale_default_locale
 
+    - name: Check that /etc/default/locale contains en_GB.UTF-8 UTF-8
+      ansible.builtin.assert:
+        that:
+          molecule_locale_default_locale == molecule_locale_default_locale
+      vars:
+        molecule_locale_default_locale_check:
+          LANG: en_GB.UTF-8
+          LANGUAGE: en_GB:en
+
     - name: Run printenv LANG
       ansible.builtin.command: printenv LANG
       check_mode: false
@@ -63,12 +80,12 @@
       register: molecule_printenv_lang
       failed_when: molecule_printenv_lang.rc is not regex('^0|1$')
 
-    - name: Debug printenv LANG
+    - name: Debug root LANG
       ansible.builtin.debug:
         var: molecule_printenv_lang.stdout_lines
-      when: molecule_printenv_lang.rc == 1
+      when: molecule_printenv_lang.rc == 0
 
-    - name: Run printenv LANGUAGE
+    - name: Run root LANGUAGE
       ansible.builtin.command: printenv LANGUAGE
       check_mode: false
       changed_when: false
@@ -78,5 +95,5 @@
     - name: Debug printenv LANGUAGE
       ansible.builtin.debug:
         var: molecule_printenv_language.stdout_lines
-      when: molecule_printenv_language.rc == 1
+      when: molecule_printenv_language.rc == 0
 ...
