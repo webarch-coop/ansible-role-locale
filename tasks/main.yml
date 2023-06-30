@@ -53,22 +53,30 @@
         vtype: select
       when: locale_init != "chroot"
 
-    - name: Locale package present
-      ansible.builtin.apt:
-        pkg:
-          - locales
-        dpkg_options: force-confdef,force-confold
-        install_recommends: true
-        update_cache: true
-        state: present
-      environment:
-        DEBIAN_FRONTEND: noninteractive
-        LANG: "en_US.UTF-8"
-      register: locale_apt_install
-      failed_when: >-
-        ( locale_apt_install.rc != 0 ) or
-        ( locale_apt_install.rc is not defined ) or
-        ( locale_init == "chroot" and locale_apt_install.rc is defined and locale_apt_install.rc != 100 )
+    - name: Install locales in a block to debug failures
+      block:
+
+        - name: Locale package present
+          ansible.builtin.apt:
+            pkg:
+              - locales
+            dpkg_options: force-confdef,force-confold
+            install_recommends: true
+            update_cache: true
+            state: present
+          environment:
+            DEBIAN_FRONTEND: noninteractive
+            LANG: "en_US.UTF-8"
+          register: locale_apt_install
+
+      rescue:
+
+        - name: Debug locale_apt_install
+          ansible.builtin.debug:
+            var: locale_apt_install
+
+        - name: Fail as apt install locales failed
+          ansible.builtin.fail:
 
     - name: Locale present
       community.general.locale_gen:
