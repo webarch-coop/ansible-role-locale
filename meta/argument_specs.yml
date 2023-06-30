@@ -26,4 +26,8 @@ argument_specs:
         type: str
         required: true
         description: The language to use.
+      locale_verify:
+        type: bool
+        required: true
+        description: Verify all variables that start with locale_ using the argument spec.
 ...
