@@ -69,12 +69,6 @@
         name: "{{ locale_lang }}"
         state: present
 
-    - name: Check if system has been booted with systemd as init system
-      ansible.builtin.command: ps -p 1 -o comm=
-      changed_when: false
-      check_mode: false
-      register: locale_init
-
     - name: Check and set systemd environment
       block:
 
