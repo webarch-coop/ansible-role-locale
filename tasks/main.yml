@@ -45,7 +45,7 @@
         var: locale_init
       when: locale_init != "systemd"
 
-    - name: Instak normally when not in a chroot
+    - name: Install when not in a chroot
       block:
 
         - name: Debconf default locale
