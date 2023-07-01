@@ -45,22 +45,33 @@
         var: locale_init
       when: locale_init != "systemd"
 
-    - name: Debconf default locale
-      ansible.builtin.debconf:
-        name: locales
-        question: locales/default_environment_locale
-        value: "{{ locale_lang }}"
-        vtype: select
+    - name: Instak normally when not in a chroot
+      block:
+
+        - name: Debconf default locale
+          ansible.builtin.debconf:
+            name: locales
+            question: locales/default_environment_locale
+            value: "{{ locale_lang }}"
+            vtype: select
+
+        - name: Locale package present
+          ansible.builtin.apt:
+            pkg:
+              - locales
+            install_recommends: true
+            update_cache: true
+            state: present
+
       when: locale_init != "chroot"
 
-    - name: Install locales in a block to debug failures
+    - name: Install locales in a block to debug failures when in a chroot
       block:
 
         - name: Locale package present
           ansible.builtin.apt:
             pkg:
               - locales
-            dpkg_options: force-confdef,force-confold
             install_recommends: true
             update_cache: true
             state: present
@@ -68,10 +79,7 @@
             DEBIAN_FRONTEND: noninteractive
             LANG: "en_US.UTF-8"
           register: locale_apt_install
-          failed_when:
-            ( ( "posix_openpt" not in locale_apt_install.stderr_lines ) and ( locale_init == "chroot" ) ) or
-            ( ( locale_apt_install.rc is defined ) and ( locale_init == "chroot" ) and ( locale_apt_install.rc != "100" ) ) or
-            ( ( locale_apt_install.rc is not defined ) and ( locale_apt_install.stderr is defined ) and ( locale_apt_install.stderr | length != 0 ) )
+          failed_when: ( "posix_openpt" not in locale_apt_install.stderr_lines[0] )
 
       rescue:
 
@@ -81,6 +89,8 @@
 
         - name: Fail as apt install locales failed
           ansible.builtin.fail:
+
+      when: locale_init == "chroot"
 
     - name: Locale present
       community.general.locale_gen:
