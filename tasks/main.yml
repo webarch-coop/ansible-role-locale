@@ -79,7 +79,9 @@
             DEBIAN_FRONTEND: noninteractive
             LANG: "en_US.UTF-8"
           register: locale_apt_install
-          failed_when: ( "posix_openpt" not in locale_apt_install.stderr_lines[0] )
+          failed_when:
+            - locale_apt_install.stderr is defined
+            - ( "posix_openpt" not in locale_apt_install.stderr )
 
       rescue:
 
