@@ -9,19 +9,16 @@
 # You should have received a copy of the GNU General Public License along with the Webarchitects Locale Ansible role. If not, see <https://www.gnu.org/licenses/>.
 ---
 variables:
+  ANSIBLE_CALLBACK_RESULT_FORMAT: "yaml"
   ANSIBLE_DISPLAY_SKIPPED_HOSTS: "0"
   ANSIBLE_FORCE_COLOR: "1"
-  GIT_STRATEGY: none
+  ANSIBLE_REMOTE_TMP: "/tmp"
+  ANSIBLE_SHELL_ALLOW_WORLD_READABLE_TEMP: "1"
   MOLECULE_VERBOSITY: "0"
   PY_COLORS: "1"
 before_script:
-  - cd
-  - source ~/.profile
-  - mkdir -p builds/${CI_PROJECT_ROOT_NAMESPACE}
-  - cd builds/${CI_PROJECT_ROOT_NAMESPACE}
-  - git clone ${CI_PROJECT_URL}.git
-  - cd ${CI_PROJECT_NAME}
-  - cat /etc/debian_version
+  - whoami
+  - pwd
   - which ansible
   - ansible --version
   - which yamllint
