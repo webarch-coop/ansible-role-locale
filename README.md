@@ -6,7 +6,7 @@ This role sets the `debconf` default locale, generates the specified locale, set
 
 ## Role variables
 
-See the [defaults/main.yml](defaults/main.yml) file for the default variables and [meta/argument_spacs.yml](meta/argument_specs.yml) for the variable specification.
+See the [defaults/main.yml](defaults/main.yml) file for the default variables and [meta/argument_specs.yml](meta/argument_specs.yml) for the variable specification.
 
 ### locale
 
