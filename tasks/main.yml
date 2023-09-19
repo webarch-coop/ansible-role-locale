@@ -48,12 +48,28 @@
     - name: Install when not in a chroot
       block:
 
+        - name: Get existing debconf values for locales
+          ansible.builtin.debconf:
+            name: locales
+          register: locale_dcnf
+
+        - name: Set a variable for the current locales
+          ansible.builtin.set_fact:
+            locale_dcnf_locale: "{{ locale_dcnf | community.general.json_query(locale_dcnf_jpq) }}"
+          vars:
+            locale_dcnf_jpq: 'current.["locales/default_environment_locale"]|[0]'
+
+        - name: Debug existing debconf values for locales
+          ansible.builtin.debug:
+            var: locale_dcnf_locale
+
         - name: Debconf default locale
           ansible.builtin.debconf:
             name: locales
             question: locales/default_environment_locale
             value: "{{ locale_lang }}"
             vtype: select
+          when: locale_dcnf_locale != locale_lang
 
         - name: Locale package present
           ansible.builtin.apt:
