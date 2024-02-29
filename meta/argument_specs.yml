@@ -1,4 +1,4 @@
-# Copyright 2020-2023 Chris Croome
+# Copyright 2020-2024 Chris Croome
 #
 # This file is part of the Webarchitects Locale Ansible role.
 #
@@ -21,11 +21,15 @@ argument_specs:
       locale_lang:
         type: str
         required: true
-        description: The character set use.
+        description: The character set use for LANG.
       locale_language:
         type: str
         required: true
-        description: The language to use.
+        description: The language to use for LANGUAGE.
+      locale_lc_ctype:
+        type: str
+        required: true
+        description: The character set use for LC_CTYPE.
       locale_verify:
         type: bool
         required: true

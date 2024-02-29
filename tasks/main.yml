@@ -1,4 +1,4 @@
-# Copyright 2020-2023 Chris Croome
+# Copyright 2020-2024 Chris Croome
 #
 # This file is part of the Webarchitects Locale Ansible role.
 #
@@ -142,27 +142,48 @@
             ( locale_environment.LANGUAGE is not defined ) or
             ( ( locale_environment.LANGUAGE is defined ) and ( locale_environment.LANGUAGE != locale_language ) )
 
+        - name: Set systemd LC_CTYPE  # noqa command-instead-of-module
+          ansible.builtin.command: "systemctl set-environment LC_CTYPE={{ locale_lang }}"
+          changed_when: true
+          when: >-
+            ( locale_environment.LC_CTYPE is not defined ) or
+            ( ( locale_environment.LC_CTYPE is defined ) and ( locale_environment.LC_CTYPE != locale_lang ) )
+
       when: locale_init == "systemd"
 
     - name: Slurp /etc/default/locale
       ansible.builtin.slurp:
         src: /etc/default/locale
+      check_mode: false
       register: locale_default_existing_b64encoded
       changed_when: false
-      check_mode: false
 
     - name: Set a fact for the default locale
       ansible.builtin.set_fact:
         locale_default_locale: "{{ locale_default_existing_b64encoded['content'] | b64decode | string | community.general.jc('ini') }}"
 
+    - name: Update locale command that would run when not in check mode
+      ansible.builtin.debug:
+        msg: "update-locale LANG={{ locale_lang }} LANGUAGE={{ locale_language }} LC_CTYPE={{ locale_lc_ctype }}"
+      check_mode: true
+      when: >-
+        ( locale_default_locale.LANG is not defined ) or
+        ( ( locale_default_locale.LANG is defined ) and ( locale_default_locale.LANG != locale_lang ) ) or
+        ( locale_default_locale.LANGUAGE is not defined ) or
+        ( ( locale_default_locale.LANGUAGE is defined ) and ( locale_default_locale.LANGUAGE != locale_language ) ) or
+        ( locale_default_locale.LC_CTYPE is not defined ) or
+        ( ( locale_default_locale.LC_CTYPE is defined ) and ( locale_default_locale.LC_CTYPE != locale_lang ) )
+
     - name: Update locale
-      ansible.builtin.command: "update-locale LANG={{ locale_lang }} LANGUAGE={{ locale_language }}"
+      ansible.builtin.command: "update-locale LANG={{ locale_lang }} LANGUAGE={{ locale_language }} LC_CTYPE={{ locale_lc_ctype }}"
       changed_when: true
       when: >-
         ( locale_default_locale.LANG is not defined ) or
         ( ( locale_default_locale.LANG is defined ) and ( locale_default_locale.LANG != locale_lang ) ) or
         ( locale_default_locale.LANGUAGE is not defined ) or
-        ( ( locale_default_locale.LANGUAGE is defined ) and ( locale_default_locale.LANGUAGE != locale_language ) )
+        ( ( locale_default_locale.LANGUAGE is defined ) and ( locale_default_locale.LANGUAGE != locale_language ) ) or
+        ( locale_default_locale.LC_CTYPE is not defined ) or
+        ( ( locale_default_locale.LC_CTYPE is defined ) and ( locale_default_locale.LC_CTYPE != locale_lang ) )
 
   when: locale | bool
   tags:

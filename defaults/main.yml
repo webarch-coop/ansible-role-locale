@@ -1,4 +1,4 @@
-# Copyright 2020-2023 Chris Croome
+# Copyright 2020-2024 Chris Croome
 #
 # This file is part of the Webarchitects Locale Ansible role.
 #
@@ -11,5 +11,6 @@
 locale: false
 locale_lang: en_GB.UTF-8
 locale_language: en_GB:en
+locale_lc_ctype: "{{ locale_lang }}"
 locale_verify: true
 ...
