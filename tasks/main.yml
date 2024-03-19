@@ -176,6 +176,8 @@
 
     - name: Update locale
       ansible.builtin.command: "update-locale LANG={{ locale_lang }} LANGUAGE={{ locale_language }} LC_CTYPE={{ locale_lc_ctype }}"
+      environment:
+        PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       changed_when: true
       when: >-
         ( locale_default_locale.LANG is not defined ) or
